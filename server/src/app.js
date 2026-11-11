@@ -30,6 +30,7 @@ app.use('/api/v1/users', require('./routes/v1/users'));
 app.use('/api/v1/sources', require('./routes/v1/sources'));
 app.use('/api/v1/rules', require('./routes/v1/rules'));
 app.use('/api/v1/policies', require('./routes/v1/policies'));
+app.use('/api/v1/logs', require('./routes/v1/logs'));
 
 app.use((req, res) => {
   res.status(404).json({ error: { code: 'NOT_FOUND', message: `Route not found: ${req.method} ${req.originalUrl}` } });
