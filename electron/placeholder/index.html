@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';" />
+    <title>LogSentinel</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; display: grid; place-items: center; height: 100vh; }
+      .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 28px 32px; max-width: 560px; }
+      h1 { margin: 0 0 8px; font-size: 22px; }
+      p { margin: 6px 0; color: #94a3b8; }
+      code { background: #0b1220; padding: 2px 6px; border-radius: 4px; color: #93c5fd; }
+      #info { margin-top: 14px; font-size: 13px; color: #cbd5e1; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>LogSentinel — Electron shell (Part 3)</h1>
+      <p>The desktop shell is running with secure defaults:</p>
+      <p><code>contextIsolation: true</code> · <code>sandbox: true</code> · <code>nodeIntegration: false</code></p>
+      <p>Preload exposes <code>window.api</code> only (no <code>ipcRenderer</code> to the page).</p>
+      <div id="info">Loading app info…</div>
+    </div>
+    <script>
+      (async () => {
+        const el = document.getElementById('info');
+        try {
+          const info = await window.api.getAppInfo();
+          el.textContent = `platform: ${info.platform}\nElectron ${info.versions.electron} · Chrome ${info.versions.chrome} · Node ${info.versions.node}\nping: ${window.api.ping()}`;
+        } catch (e) {
+          el.textContent = 'Could not read app info via preload bridge.';
+        }
+      })();
+    </script>
+  </body>
+</html>
