@@ -28,6 +28,8 @@ app.get('/api/v1/health', catchErrors(async (req, res) => {
 app.use('/api/v1/auth', require('./routes/v1/auth'));
 app.use('/api/v1/users', require('./routes/v1/users'));
 app.use('/api/v1/sources', require('./routes/v1/sources'));
+app.use('/api/v1/sources', require('./routes/v1/import'));
+app.use('/api/v1/sources', require('./routes/v1/watch'));
 app.use('/api/v1/rules', require('./routes/v1/rules'));
 app.use('/api/v1/policies', require('./routes/v1/policies'));
 app.use('/api/v1/logs', require('./routes/v1/logs'));
