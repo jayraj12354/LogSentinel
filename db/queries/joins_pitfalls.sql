@@ -1,11 +1,11 @@
--- Joins pitfalls: missing source due to inner join vs left join
--- INNER JOIN drops log_entries whose source was deleted
+-- Joins pitfalls: inner join drops orphaned entries vs left join keeps them
+-- Inner join: only entries with a source
 SELECT le.id, le.message, s.name AS source_name
 FROM log_entries le
 INNER JOIN sources s ON s.id = le.source_id
 LIMIT 5;
 
--- LEFT JOIN keeps orphaned entries (source may be null)
+-- Left join: entries without a source show null source_name
 SELECT le.id, le.message, s.name AS source_name
 FROM log_entries le
 LEFT JOIN sources s ON s.id = le.source_id
