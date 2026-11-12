@@ -33,6 +33,9 @@ app.use('/api/v1/sources', require('./routes/v1/watch'));
 app.use('/api/v1/rules', require('./routes/v1/rules'));
 app.use('/api/v1/policies', require('./routes/v1/policies'));
 app.use('/api/v1/logs', require('./routes/v1/logs'));
+app.use('/api/v1/analytics', require('./routes/v1/analytics'));
+app.use('/api/v1/alerts', require('./routes/v1/alerts'));
+app.use('/api/v1/alerts', require('./routes/v1/alertsStream'));
 
 app.use((req, res) => {
   res.status(404).json({ error: { code: 'NOT_FOUND', message: `Route not found: ${req.method} ${req.originalUrl}` } });
