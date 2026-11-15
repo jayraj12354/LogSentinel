@@ -1,6 +1,6 @@
 {
   "name": "logsentinel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "LogSentinel — Desktop Log Monitoring & Alerting System",
   "scripts": {

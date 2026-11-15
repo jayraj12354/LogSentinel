@@ -14,7 +14,7 @@ function registerIpc(mainWindow, settings) {
   });
   ipcMain.handle('app:getInfo', async () => ({
     ok: true,
-    data: { name: 'LogSentinel', version: '0.1.0', electron: process.versions.electron, chrome: process.versions.chrome, node: process.versions.node, platform: process.platform, isPackaged: app.isPackaged },
+    data: { name: 'LogSentinel', version: app.getVersion(), electron: process.versions.electron, chrome: process.versions.chrome, node: process.versions.node, platform: process.platform, isPackaged: app.isPackaged },
   }));
   ipcMain.handle('window:toggleFullscreen', async () => {
     const win = mainWindow; const isFs = win.isFullScreen(); win.setFullScreen(!isFs); return { ok: true, data: { fullscreen: !isFs } };

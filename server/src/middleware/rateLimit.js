@@ -10,8 +10,11 @@ setInterval(() => {
   for (const key of Object.keys(attempts)) if (now > attempts[key].reset) delete attempts[key];
 }, WINDOW_MS).unref();
 
+// Counted per username, not per IP: behind Render/Cloudflare the client IP isn't reliable (X-Forwarded-For can be faked
+// and the proxy chain varies), and any IP-based key can be dodged by rotating IPs.
+// Trade-off: anyone can lock a known username out for one window; acceptable for this app.
 function loginThrottle(req, res, next) {
-  const key = (req.ip || req.connection.remoteAddress || 'unknown') + ':' + (req.body && req.body.username || '');
+  const key = String((req.body && req.body.username) || '');
   const now = Date.now();
   const entry = attempts[key] || { count: 0, reset: now + WINDOW_MS };
   if (now > entry.reset) {
