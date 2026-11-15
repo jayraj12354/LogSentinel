@@ -1,15 +1,24 @@
 'use strict';
 
 const { LogWatcher } = require('./LogWatcher');
+const { pool } = require('../config/db');
 
 class WatchManager {
   constructor() {
     this._watchers = new Map();
   }
 
-  start(sourceId, filePath, onLine) {
+  async start(sourceId, filePath, onLine) {
     if (this._watchers.has(sourceId)) return false;
-    const watcher = new LogWatcher(filePath);
+
+    // Continue line numbering from existing entries to avoid duplicate PKs
+    const { rows } = await pool.query(
+      'SELECT COALESCE(MAX(line_no), 0) AS maxLine FROM log_entries WHERE source_id = $1',
+      [sourceId]
+    );
+    const startLineNo = rows[0].maxline;
+
+    const watcher = new LogWatcher(filePath, startLineNo);
     watcher.on('line', ({ lineNo, text }) => onLine(sourceId, lineNo, text));
     watcher.start().catch(() => {});
     this._watchers.set(sourceId, watcher);

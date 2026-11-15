@@ -10,6 +10,8 @@ const logger = require('./utils/logger');
 const { evaluatePolicies } = require('./services/alertEngine');
 const { attach: attachAlertListener } = require('./services/alertListener');
 
+let mainWindow = null;
+
 const server = app.listen(config.port, () => {
   logger.info(`LogSentinel API listening on http://localhost:${config.port}`);
 });
@@ -20,7 +22,12 @@ const alertInterval = setInterval(() => {
 }, config.alertEvalIntervalMs);
 
 // Attach DB LISTEN/NOTIFY listener for real-time alert push
-attachAlertListener(null).catch((e) => logger.error('Alert listener attach failed', e));
+attachAlertListener(mainWindow).catch((e) => logger.error('Alert listener attach failed', e));
+
+// Expose main window setter for Electron integration
+function setMainWindow(win) {
+  mainWindow = win;
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {
@@ -33,3 +40,5 @@ process.on('SIGTERM', () => {
   clearInterval(alertInterval);
   server.close(() => process.exit(0));
 });
+
+module.exports = { setMainWindow };
