@@ -21,8 +21,8 @@ async function main() {
   }
 
   const rules = [
-    { name: 'Login failure', pattern: 'failed password\\|authentication failure\\|invalid user\\|login failed', category: 'AUTH_FAILURE', severity: 'MEDIUM' },
-    { name: 'Login success', pattern: 'accepted password\\|accepted publickey\\|session opened\\|login successful', category: 'AUTH_SUCCESS', severity: 'LOW' },
+    { name: 'Login failure', pattern: 'failed password|authentication failure|invalid user|login failed', category: 'AUTH_FAILURE', severity: 'MEDIUM' },
+    { name: 'Login success', pattern: 'accepted password|accepted publickey|session opened|login successful', category: 'AUTH_SUCCESS', severity: 'LOW' },
   ];
   const admin = await prisma.user.findUnique({ where: { username: 'admin' } });
   for (const r of rules) {

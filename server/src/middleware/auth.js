@@ -1,7 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const config = require('./config/env');
+const config = require('../config/env');
 
 function auth(req, res, next) {
   const h = req.headers.authorization || '';

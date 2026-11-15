@@ -1,13 +1,95 @@
 {
   "name": "logsentinel-electron",
+  "productName": "LogSentinel",
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
   "scripts": {
     "dev": "electron .",
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -m",
+    "postinstall": "node -e \"process.platform==='darwin'&&require('child_process').execSync('codesign --force --deep --sign - node_modules/electron/dist/Electron.app',{stdio:'inherit'})\""
   },
   "devDependencies": {
-    "electron": "^31.0.0"
+    "electron": "^31.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  },
+  "build": {
+    "appId": "com.logsentinel.app",
+    "mac": {
+      "target": "dmg",
+      "artifactName": "LogSentinel-${version}.dmg",
+      "identity": "-",
+      "entitlements": "entitlements.plist",
+      "entitlementsInherit": "entitlements.plist"
+    },
+    "dmg": {
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 130,
+          "y": 220,
+          "type": "file"
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "config.js",
+      "menu.js",
+      "tray.js",
+      "settings.js",
+      "serverManager.js",
+      "alertStream.js",
+      "notifications.js",
+      "ipc/",
+      "windows/",
+      "assets/",
+      "placeholder/"
+    ],
+    "extraResources": [
+      {
+        "from": "../server",
+        "to": "server",
+        "filter": [
+          "**/*",
+          "!tests/**"
+        ]
+      },
+      {
+        "from": "../server/node_modules",
+        "to": "server/node_modules",
+        "filter": [
+          "**/*",
+          "!fsevents/**"
+        ]
+      },
+      {
+        "from": "../.env",
+        "to": ".env"
+      },
+      {
+        "from": "../client/dist",
+        "to": "client/dist"
+      },
+      {
+        "from": "../sample-logs",
+        "to": "sample-logs"
+      }
+    ]
   }
 }

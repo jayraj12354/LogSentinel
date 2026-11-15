@@ -18,7 +18,7 @@ exports.list = async (req, res) => {
 };
 
 exports.read = async (req, res) => {
-  const alert = await prisma.alert.findUnique({ where: { id: Number(req.params.id) }, include: { policy: true, source: true, acknowledger: true } });
+  const alert = await prisma.alert.findUnique({ where: { id: Number(req.params.id) }, include: { policy: true, source: true, acknowledger: { select: { id: true, username: true } } } });
   if (!alert) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'alert not found' } });
   res.json({ data: alert });
 };
@@ -27,6 +27,7 @@ exports.ack = async (req, res) => {
   const id = Number(req.params.id);
   const alert = await prisma.alert.findUnique({ where: { id } });
   if (!alert) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'alert not found' } });
+  if (alert.status !== 'OPEN') return res.status(409).json({ error: { code: 'CONFLICT', message: `alert is already ${alert.status.toLowerCase()}` } });
   const updated = await prisma.alert.update({ where: { id }, data: { status: 'ACKNOWLEDGED', acknowledgedBy: req.user.id, acknowledgedAt: new Date() } });
   res.json({ data: updated });
 };
@@ -35,6 +36,7 @@ exports.resolve = async (req, res) => {
   const id = Number(req.params.id);
   const alert = await prisma.alert.findUnique({ where: { id } });
   if (!alert) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'alert not found' } });
-  const updated = await prisma.alert.update({ where: { id }, data: { status: 'RESOLVED', acknowledgedBy: alert.status === 'OPEN' ? req.user.id : alert.acknowledgedBy, acknowledgedAt: new Date() } });
+  if (alert.status === 'RESOLVED') return res.status(409).json({ error: { code: 'CONFLICT', message: 'alert is already resolved' } });
+  const updated = await prisma.alert.update({ where: { id }, data: { status: 'RESOLVED', dedupeKey: `${alert.dedupeKey}#${id}`, acknowledgedBy: alert.status === 'OPEN' ? req.user.id : alert.acknowledgedBy, acknowledgedAt: new Date() } });
   res.json({ data: updated });
 };

@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
     if (token) {
       api
         .get('/auth/me')
-        .then((u) => setUser(u))
+        .then(({ data }) => { setUser(data); window.api?.setAuthToken(token); })
         .catch(() => {
           localStorage.removeItem('ls_token');
           setUser(null);
@@ -24,16 +24,23 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (creds) => {
-    const { token, user } = await api.post('/auth/login', creds);
+    const { data: { token, user } } = await api.post('/auth/login', creds);
     localStorage.setItem('ls_token', token);
+    window.api?.setAuthToken(token);
     setUser(user);
     return user;
   };
 
   const logout = () => {
     localStorage.removeItem('ls_token');
+    window.api?.setAuthToken(null);
     setUser(null);
   };
+
+  useEffect(() => {
+    window.addEventListener('ls:unauthorized', logout);
+    return () => window.removeEventListener('ls:unauthorized', logout);
+  }, []);
 
   const value = { user, loading, login, logout, isAuthenticated: !!user, isAdmin: user?.role === 'ADMIN' };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

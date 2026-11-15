@@ -1,9 +1,9 @@
 'use strict';
 
 const express = require('express');
-const { auth, adminOnly } = require('../middleware/auth');
-const catchErrors = require('../middleware/catchErrors');
-const { importFile } = require('../services/importService');
+const { auth, adminOnly } = require('../../middleware/auth');
+const catchErrors = require('../../middleware/catchErrors');
+const { importFile } = require('../../services/importService');
 
 const r = express.Router();
 r.post('/:id/import', auth, adminOnly, catchErrors(async (req, res) => {

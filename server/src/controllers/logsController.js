@@ -1,5 +1,6 @@
 'use strict';
 
+const net = require('net');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -15,9 +16,16 @@ exports.list = async (req, res) => {
   const { sourceId, level, category, ip, q, from, to, page = 1, pageSize = 25 } = req.query;
   const where = {};
   if (sourceId) where.sourceId = Number(sourceId);
-  if (level) where.level = { in: parseLevels(level) };
+  if (level) {
+    const levels = parseLevels(level);
+    if (!levels) return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: `level must be one of ${LEVELS.join(', ')}` } });
+    where.level = { in: levels };
+  }
   if (category) where.category = category;
-  if (ip) where.ip = ip;
+  if (ip) {
+    if (!net.isIP(ip)) return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: `“${ip}” isn’t a valid IP address` } });
+    where.ip = ip;
+  }
   if (q) where.message = { contains: q, mode: 'insensitive' };
   if (from || to) {
     where.loggedAt = {};

@@ -1,6 +1,6 @@
 'use strict';
 
-const GENERIC = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)\s+(DEBUG|INFO|WARN|ERROR|CRITICAL)\s+\[([^\]]+)\]\s+(.*)$/;
+const GENERIC = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z?)\s+(DEBUG|INFO|WARN|ERROR|CRITICAL)\s+\[([^\]]+)\]\s+(.*)$/;
 const ACCESS = /^(\S+) \S+ \S+ \[([^\]]+)\] "(\S+) (\S+) (\S+)" (\d{3}) (\d+|-)(?: "([^"]*)" "([^"]*)")?$/;
 const IP_RE = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
 
@@ -19,6 +19,7 @@ function validIp(candidate) {
 
 function extractIp(text) {
   let match;
+  IP_RE.lastIndex = 0; // global regex keeps state between calls; an early return would skip the next line's IP
   while ((match = IP_RE.exec(text)) !== null) {
     if (validIp(match[0])) return match[0];
   }
