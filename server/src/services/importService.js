@@ -3,14 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { Pool } = require('pg');
 const { parseLine } = require('./logParser');
 const { compileRules, classify } = require('./classifier');
-const { PrismaClient } = require('@prisma/client');
 const config = require('../config/env');
-
-const pool = new Pool({ connectionString: config.databaseUrl });
-const prisma = new PrismaClient();
+const { pool, prisma } = require('../config/db');
 
 // Relative paths (e.g. seeded 'sample-logs/auth.log') resolve against the repo root / app Resources dir, not process.cwd().
 const ROOT = path.resolve(__dirname, '..', '..', '..');

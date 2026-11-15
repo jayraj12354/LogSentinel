@@ -130,9 +130,9 @@ logsentinel/
 ├── electron/
 │   ├── package.json  main.js  preload.js  config.js  menu.js  tray.js
 │   ├── serverManager.js  alertStream.js  notifications.js  settings.js
-│   ├── windows/ (mainWindow.js alertWindow.js splash.js)
+│   ├── windows/ (alertWindow.js)
 │   ├── ipc/ (registerIpc.js dialogs.js windows.js appInfo.js auth.js settings.js files.js)
-│   ├── assets/  placeholder/index.html
+│   ├── assets/
 ├── scripts/                      # generate-logs.js  simulate-attack.js  setup.js
 ├── sample-logs/                  # generated (git-ignored)
 ├── docs/                         # ERD, API, IPC, notes, demo script, syllabus map
@@ -545,7 +545,6 @@ Base paths: `/api/v1` and `/api/v2`. Auth = `Authorization: Bearer <jwt>`. **A**
 | GET | `/logs/filters` | Any | distinct sources, levels, categories | 5 |
 | GET | `/logs/:sourceId/:lineNo` | Any | one entry with `raw` | 5 |
 | GET | `/analytics/summary` | Any | dashboard numbers | 5, 10 |
-| GET | `/analytics/file-vs-sql` | Any | `?sourceId&ip` → timing comparison | 9 |
 | GET | `/analytics/:name` | Any | run one catalogued query (Section Part 9) | 9 |
 | GET | `/analytics/:name/sql` | Any | returns the `.sql` text (whitelisted names) | 9 |
 | GET | `/alerts` | Any | `?status&severity&page&pageSize` | 10 |
@@ -555,7 +554,7 @@ Base paths: `/api/v1` and `/api/v2`. Auth = `Authorization: Bearer <jwt>`. **A**
 | GET | `/api/v2/health` | Public | `{ version: 2 }` | 4 |
 | GET | `/api/v2/logs` | Any | **keyset pagination**: `?limit=50&cursor=...` → `{ data, nextCursor }` (cursor encodes `loggedAt\|sourceId\|lineNo`, order `logged_at DESC, source_id, line_no`) | 5 |
 
-**Route-order rule:** register `/analytics/summary` and `/analytics/file-vs-sql` **before** `/analytics/:name`, otherwise `:name` swallows them.
+**Route-order rule:** register `/analytics/summary` **before** `/analytics/:name`, otherwise `:name` swallows them.
 
 ---
 
@@ -576,6 +575,7 @@ All `invoke` handlers return `{ ok: true, data }` or `{ ok: false, error: { code
 | `settings:set` | partial settings | updated settings | 8 |
 | `auth:setToken` | `{ token \| null }` | `{ stored }` | 8 |
 | `server:getStatus` | — | `{ running, pid?, port, lastCheck }` | 8 |
+| `tray:setCount` | `{ count }` (whole number ≥ 0: open alerts) | `{ count }` | 11 |
 | `file:saveText` | `{ defaultName, content, filters? }` | `{ canceled, filePath }` | 11 |
 | `report:exportPdf` | `{ defaultName? }` | `{ canceled, filePath }` | 11 |
 | `capture:dashboard` | — | `{ filePath }` | 11 |
@@ -593,7 +593,7 @@ All `invoke` handlers return `{ ok: true, data }` or `{ ok: false, error: { code
 **Settings defaults:** `{ notifications: true, minSeverity: "MEDIUM", minimizeToTray: true, launchAtStartup: false, soundAlerts: false, theme: "system" }`, stored in `userData/settings.json`.
 
 **Preload surface (`window.api`, nothing else is exposed, `ipcRenderer` is never exposed):**
-`openLogFile()`, `saveText(opts)`, `exportPdf(opts)`, `captureDashboard()`, `getAppInfo()`, `toggleFullscreen()`, `openAlertWindow(alertId)`, `showInFolder(filePath)`, `getSettings()`, `setSettings(patch)`, `setAuthToken(token)`, `getServerStatus()`, `getPathForFile(file)` (uses `webUtils`, no IPC), `onServerStatus(cb)`, `onNavigate(cb)`, `onRefresh(cb)`, `onAlert(cb)`, `onSettingsChanged(cb)`. Every `on*` returns an **unsubscribe function**.
+`openLogFile()`, `saveText(opts)`, `exportPdf(opts)`, `captureDashboard()`, `getAppInfo()`, `toggleFullscreen()`, `openAlertWindow(alertId)`, `showInFolder(filePath)`, `getSettings()`, `setSettings(patch)`, `setAuthToken(token)`, `setAlertCount(count)`, `getServerStatus()`, `getPathForFile(file)` (uses `webUtils`, no IPC), `onServerStatus(cb)`, `onNavigate(cb)`, `onRefresh(cb)`, `onAlert(cb)`, `onSettingsChanged(cb)`. Every `on*` returns an **unsubscribe function**.
 
 ---
 

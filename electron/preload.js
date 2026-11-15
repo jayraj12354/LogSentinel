@@ -12,6 +12,7 @@ const api = {
   getSettings: () => ipcRenderer.invoke('settings:get'),
   setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
   setAuthToken: (token) => ipcRenderer.invoke('auth:setToken', { token }),
+  setAlertCount: (count) => ipcRenderer.invoke('tray:setCount', { count }),
   getServerStatus: () => ipcRenderer.invoke('server:getStatus'),
   onServerStatus: (cb) => { const h = (e, d) => cb(d); ipcRenderer.on('server:status', h); return () => ipcRenderer.off('server:status', h); },
   onNavigate: (cb) => { const h = (e, d) => cb(d); ipcRenderer.on('shortcut:navigate', h); return () => ipcRenderer.off('shortcut:navigate', h); },

@@ -3,12 +3,12 @@
 const app = require('./app');
 const config = require('./config/env');
 const logger = require('./utils/logger');
-const { attach: attachListener } = require('./services/alertListener');
+const { start: startAlertListener } = require('./services/alertListener');
 const { start: startAlertEngine } = require('./services/alertEngine');
 
 const server = app.listen(config.port, () => {
   logger.info(`LogSentinel API listening on http://localhost:${config.port}`);
-  attachListener().catch((e) => logger.warn('[alertListener] LISTEN unavailable:', e.message));
+  startAlertListener();
   startAlertEngine(config.alertEvalIntervalMs || 5000);
 });
 

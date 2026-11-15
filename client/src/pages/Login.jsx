@@ -43,7 +43,7 @@ export default function Login() {
         <label htmlFor="p">Password</label>
         <input id="p" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
         <button className="btn btn-primary btn-wide" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
-        <p className="hint">Demo accounts: admin / admin123 or viewer / viewer123</p>
+        {import.meta.env.DEV && <p className="hint">Demo accounts: admin / admin123 or viewer / viewer123</p>}
       </form>
     </div>
   );

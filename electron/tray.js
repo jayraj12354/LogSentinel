@@ -2,7 +2,7 @@ const { app, Tray, nativeImage } = require('electron');
 const path = require('path');
 
 let tray = null;
-let alertCount = 0;
+let alertCount = 0; // open alerts, as reported by the renderer (tray:setCount)
 
 function setCounter(n) {
   alertCount = Math.max(0, n);
@@ -18,7 +18,6 @@ function init(mainWindow) {
   if (icon.isEmpty()) tray.setTitle('LogSentinel'); // no icon file shipped; show text so the menu-bar item is visible
   tray.on('click', () => {
     if (mainWindow) mainWindow.show();
-    if (alertCount > 0) setCounter(0);
   });
 }
 

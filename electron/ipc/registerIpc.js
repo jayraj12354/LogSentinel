@@ -1,6 +1,8 @@
 const { app, ipcMain, dialog } = require('electron');
 const store = require('../settings');
 const alertStream = require('../alertStream');
+const serverManager = require('../serverManager');
+const { setCounter } = require('../tray');
 const fs = require('fs');
 const path = require('path');
 const { PDFDocument } = require('pdf-lib');
@@ -24,9 +26,19 @@ function registerIpc(mainWindow, settings) {
   });
   ipcMain.handle('shell:showItem', async (_e, { filePath }) => { dialog.showItemInFolder(filePath); return { ok: true, data: { shown: true } }; });
   ipcMain.handle('settings:get', async () => ({ ok: true, data: settings }));
-  ipcMain.handle('settings:set', async (_e, patch) => ({ ok: true, data: store.set(patch) }));
+  ipcMain.handle('settings:set', async (_e, patch) => {
+    // Only known keys, each with its default's type, reach settings.json.
+    const bad = !patch || typeof patch !== 'object' || Object.entries(patch).some(([k, v]) => !(k in store.DEFAULTS) || typeof v !== typeof store.DEFAULTS[k]);
+    if (bad) return { ok: false, error: { code: 'VALIDATION_ERROR', message: 'unknown setting or wrong type' } };
+    return { ok: true, data: store.set(patch) };
+  });
+  ipcMain.handle('tray:setCount', async (_e, { count } = {}) => {
+    if (!Number.isInteger(count) || count < 0) return { ok: false, error: { code: 'VALIDATION_ERROR', message: 'count must be a whole number' } };
+    setCounter(count);
+    return { ok: true, data: { count } };
+  });
   ipcMain.handle('auth:setToken', async (_e, { token }) => { alertStream.setToken(token); return { ok: true, data: { stored: true } }; });
-  ipcMain.handle('server:getStatus', async () => ({ ok: true, data: { running: true, port: 4000, lastCheck: new Date().toISOString() } }));
+  ipcMain.handle('server:getStatus', async () => ({ ok: true, data: { ...serverManager.status(), lastCheck: new Date().toISOString() } }));
 
   ipcMain.handle('file:saveText', async (_e, { defaultName, content, filters }) => {
     const result = await dialog.showSaveDialog(mainWindow, { defaultPath: defaultName || 'export.txt' });

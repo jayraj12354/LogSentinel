@@ -35,4 +35,9 @@ function stopServer() {
   server = null;
 }
 
-module.exports = { attach, startServer, stopServer };
+// running is false when the in-process server failed to start (e.g. port taken) or runs separately (LS_SPAWN_SERVER=0).
+function status() {
+  return { running: !!(server && server.listening), port: config.port };
+}
+
+module.exports = { attach, startServer, stopServer, status };

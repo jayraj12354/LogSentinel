@@ -4,6 +4,12 @@ const attempts = {};
 const MAX = 5;
 const WINDOW_MS = 60000;
 
+// Drop expired entries so random usernames or IPs can't grow this object forever.
+setInterval(() => {
+  const now = Date.now();
+  for (const key of Object.keys(attempts)) if (now > attempts[key].reset) delete attempts[key];
+}, WINDOW_MS).unref();
+
 function loginThrottle(req, res, next) {
   const key = (req.ip || req.connection.remoteAddress || 'unknown') + ':' + (req.body && req.body.username || '');
   const now = Date.now();
