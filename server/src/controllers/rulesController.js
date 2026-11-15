@@ -1,7 +1,6 @@
 'use strict';
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { prisma } = require('../config/db');
 
 exports.list = async (req, res) => {
   const rules = await prisma.rule.findMany({ where: { isActive: true }, orderBy: { id: 'asc' } });

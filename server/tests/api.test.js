@@ -282,11 +282,11 @@ describe('Analytics', () => {
     expect(res.body.data.totalEntries).toBeDefined();
   });
 
-  it('GET /api/v1/analytics/file-vs-sql returns timing comparison', async () => {
+  it('GET /api/v1/analytics/:name/sql refuses names outside the catalogue (no path traversal)', async () => {
     const res = await request(app)
-      .get('/api/v1/analytics/file-vs-sql')
+      .get('/api/v1/analytics/..%2F..%2Fdb%2Froles/sql')
       .set('Authorization', `Bearer ${viewerToken}`);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(404);
   });
 
   it('GET /api/v1/analytics/top_offenders runs a catalogued query', async () => {
@@ -377,6 +377,55 @@ describe('Error handling', () => {
     const res = await request(app).get('/api/v2/health');
     expect(res.status).toBe(200);
     expect(res.body.data.version).toBe(2);
+  });
+});
+
+describe('Security', () => {
+  it('POST /auth/login rejects non-string credentials with 400 instead of crashing', async () => {
+    const res = await request(app).post('/api/v1/auth/login').send({ username: { a: 1 }, password: 'x' });
+    expect(res.status).toBe(400);
+  });
+
+  it('POST /auth/login throttles after 5 tries, even when X-Forwarded-For changes each time', async () => {
+    const username = unique();
+    const statuses = [];
+    for (let i = 1; i <= 6; i += 1) {
+      const res = await request(app).post('/api/v1/auth/login').set('X-Forwarded-For', `198.51.100.${i}`).send({ username, password: 'wrong' });
+      statuses.push(res.status);
+    }
+    expect(statuses.slice(0, 5)).toEqual([401, 401, 401, 401, 401]);
+    expect(statuses[5]).toBe(429);
+  });
+
+  it('a deleted admin’s token loses admin access immediately', async () => {
+    const name = unique();
+    const created = await request(app).post('/api/v1/users').set('Authorization', `Bearer ${adminToken}`)
+      .send({ username: name, email: `${name}@example.com`, password: 'pw-123456', role: 'ADMIN' });
+    const login = await request(app).post('/api/v1/auth/login').send({ username: name, password: 'pw-123456' });
+    await request(app).delete(`/api/v1/users/${created.body.data.id}`).set('Authorization', `Bearer ${adminToken}`);
+    const res = await request(app).get('/api/v1/users').set('Authorization', `Bearer ${login.body.data.token}`);
+    expect(res.status).toBe(403);
+  });
+});
+
+describe('Alert engine', () => {
+  it('raises one alert per group however often it runs', async () => {
+    const { pool } = require('../src/config/db');
+    const { evaluatePolicies } = require('../src/services/alertEngine');
+    const tag = unique();
+    const { rows: [src] } = await pool.query("INSERT INTO sources (name) VALUES ($1) RETURNING id", [`test-source-${tag}`]);
+    const { rows: [pol] } = await pool.query(
+      "INSERT INTO alert_policies (name, category, threshold_count, window_seconds, group_by, severity) VALUES ($1, 'ENGINE_TEST', 3, 300, 'IP', 'HIGH') RETURNING id",
+      [`Test Policy ${tag}`],
+    );
+    for (let line = 1; line <= 3; line += 1) {
+      await pool.query("INSERT INTO log_entries (source_id, line_no, logged_at, level, message, ip, category) VALUES ($1, $2, now(), 'WARN', 'engine test', '203.0.113.77', 'ENGINE_TEST')", [src.id, line]);
+    }
+    await evaluatePolicies();
+    await evaluatePolicies();
+    const { rows } = await pool.query('SELECT count(*)::int AS n FROM alerts WHERE policy_id = $1', [pol.id]);
+    await pool.query('DELETE FROM alerts WHERE policy_id = $1', [pol.id]); // policy + source (and its lines) go in afterAll
+    expect(rows[0].n).toBe(1);
   });
 });
 

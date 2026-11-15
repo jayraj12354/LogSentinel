@@ -3,16 +3,14 @@
 const express = require('express');
 const { auth, adminOnly } = require('../../middleware/auth');
 const catchErrors = require('../../middleware/catchErrors');
-const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const { WatchManager } = require('../../services/watchManager');
 const { resolveLogPath } = require('../../services/importService');
 const { parseLine } = require('../../services/logParser');
 const { compileRules, classify } = require('../../services/classifier');
-const { pool } = require('../../config/db');
+const { pool, prisma } = require('../../config/db');
 const logger = require('../../utils/logger');
 
-const prisma = new PrismaClient();
 const watchManager = new WatchManager();
 
 const r = express.Router();

@@ -31,7 +31,7 @@ function parseGeneric(line) {
   if (!m) return null;
   const [, loggedAt, level, component, message] = m;
   return {
-    loggedAt: new Date(loggedAt),
+    loggedAt: new Date(loggedAt.endsWith('Z') ? loggedAt : `${loggedAt}Z`), // no zone means UTC, not the server's local time
     level,
     message,
     ip: extractIp(message),

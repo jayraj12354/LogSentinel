@@ -58,8 +58,7 @@
       "notifications.js",
       "ipc/",
       "windows/",
-      "assets/",
-      "placeholder/"
+      "assets/"
     ],
     "extraResources": [
       {

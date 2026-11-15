@@ -1,7 +1,6 @@
 'use strict';
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { prisma } = require('../config/db');
 
 exports.list = async (req, res) => {
   const where = req.query.active === 'true' ? { isActive: true } : {};

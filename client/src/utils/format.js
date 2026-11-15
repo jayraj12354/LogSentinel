@@ -4,7 +4,11 @@ export const fmtTime = (v) => (v ? new Date(v).toLocaleString(undefined, { month
 export const fmtHour = (v) => new Date(v).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit' });
 
 // RFC 4180-style CSV: quote every field, double embedded quotes.
+// Log text comes from outside; a leading = + - @ would run as a spreadsheet formula, so prefix it with '.
 export function toCsv(rows, columns) {
-  const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const esc = (v) => {
+    const s = String(v ?? '');
+    return `"${(/^[=+\-@]/.test(s) ? `'${s}` : s).replace(/"/g, '""')}"`;
+  };
   return [columns.map((c) => esc(c.label)).join(','), ...rows.map((r) => columns.map((c) => esc(c.get(r))).join(','))].join('\n');
 }

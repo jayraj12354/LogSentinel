@@ -1,15 +1,14 @@
 'use strict';
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { prisma } = require('../config/db');
 
 exports.list = async (req, res) => {
   const { status, severity, page = 1, pageSize = 25 } = req.query;
   const where = {};
   if (status) where.status = status;
   if (severity) where.severity = severity;
-  const take = Math.min(Math.max(Number(pageSize), 1), 200);
-  const skip = (Math.max(Number(page), 1) - 1) * take;
+  const take = Math.min(Math.max(Number(pageSize) || 25, 1), 200);
+  const skip = (Math.max(Number(page) || 1, 1) - 1) * take;
   const [data, total] = await Promise.all([
     prisma.alert.findMany({ where, skip, take, orderBy: { triggeredAt: 'desc' }, include: { policy: true, source: true } }),
     prisma.alert.count({ where }),

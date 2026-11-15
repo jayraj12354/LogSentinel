@@ -2,6 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 const config = require('../config/env');
+const { prisma } = require('../config/db');
 
 function auth(req, res, next) {
   const h = req.headers.authorization || '';
@@ -17,11 +18,15 @@ function auth(req, res, next) {
   }
 }
 
-function adminOnly(req, res, next) {
-  if (req.user && req.user.role === 'ADMIN') {
-    return next();
+// Checks the database, not the token: a deleted admin's token keeps working until it expires otherwise.
+async function adminOnly(req, res, next) {
+  try {
+    const user = req.user && await prisma.user.findUnique({ where: { id: req.user.id }, select: { role: true } });
+    if (user && user.role === 'ADMIN') return next();
+    res.status(403).json({ error: { code: 'FORBIDDEN', message: 'admin only' } });
+  } catch (e) {
+    next(e);
   }
-  res.status(403).json({ error: { code: 'FORBIDDEN', message: 'admin only' } });
 }
 
 module.exports = { auth, adminOnly };

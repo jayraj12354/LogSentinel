@@ -2,13 +2,12 @@
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
+const { prisma } = require('../config/db');
 const config = require('../config/env');
-const prisma = new PrismaClient();
 
 exports.login = async (req, res) => {
   const { username, password } = req.body || {};
-  if (!username || !password) {
+  if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
     return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'username and password required' } });
   }
   const user = await prisma.user.findUnique({ where: { username } });

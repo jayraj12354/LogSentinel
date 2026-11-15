@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useApi } from '../hooks/useApi';
@@ -20,6 +21,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { meta } = useApi('/alerts?status=OPEN&pageSize=1');
   const open = meta?.total || 0;
+  useEffect(() => { window.api?.setAlertCount(open); }, [open]); // tray shows open alerts, so ack/resolve lower it
 
   const link = (l) => (
     <NavLink key={l.to} to={l.to} end={l.end} className="rail-link">

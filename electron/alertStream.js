@@ -1,5 +1,4 @@
 const { ipcMain, net, Notification } = require('electron');
-const { setCounter } = require('./tray');
 
 const SEVERITY_RANK = { LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
 
@@ -56,12 +55,10 @@ function dispatchAlert(mainWindow, alert, settings) {
   if (shouldNotify && settings && settings.notifications !== false && Notification.isSupported()) {
     new Notification({
       title: alert.title || 'LogSentinel Alert',
-      body: `Severity: ${sev} · Events: ${alert.event_count || 0}`,
+      body: `Severity: ${sev} · Events: ${alert.eventCount || 0}`,
       silent: true,
     }).show();
   }
-  setCounter((global._lsAlertCount || 0) + 1);
-  global._lsAlertCount = (global._lsAlertCount || 0) + 1;
   mainWindow.webContents.send('alert:new', alert);
 }
 

@@ -8,6 +8,9 @@ const { checkDb } = require('./config/db');
 const catchErrors = require('./middleware/catchErrors');
 
 const app = express();
+// On Render (which sets RENDER=true) take the client IP from its proxy's X-Forwarded-For, so the login throttle is per user.
+// Elsewhere there is no proxy: trusting the header would let anyone fake a new IP per login attempt.
+if (process.env.RENDER) app.set('trust proxy', 1);
 
 // 'null' is the Origin Electron sends for pages loaded from file://
 app.use(cors({ origin: [config.clientOrigin, 'null'] }));

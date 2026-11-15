@@ -35,7 +35,6 @@ Error: `{ "error": { "code": "...", "message": "...", "details": [...]? } }`
 | GET | `/api/v1/logs/filters` | Distinct sources, levels, categories |
 | GET | `/api/v1/logs/:sourceId/:lineNo` | One log entry with raw |
 | GET | `/api/v1/analytics/summary` | Dashboard numbers |
-| GET | `/api/v1/analytics/file-vs-sql` | Timing comparison |
 | GET | `/api/v1/analytics/:name` | Run catalogued SQL query |
 | GET | `/api/v1/analytics/:name/sql` | Return .sql text |
 | GET | `/api/v1/alerts` | List alerts (`?status&severity&page&pageSize`) |

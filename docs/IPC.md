@@ -15,6 +15,7 @@ Preload exposes `window.api` only. `ipcRenderer` is never exposed to the rendere
 | `settings:set` | partial settings | updated settings | 8 |
 | `auth:setToken` | `{ token \| null }` | `{ stored }` | 8 |
 | `server:getStatus` | — | `{ running, pid?, port, lastCheck }` | 8 |
+| `tray:setCount` | `{ count }` (whole number ≥ 0: open alerts) | `{ count }` | 11 |
 | `file:saveText` | `{ defaultName, content, filters? }` | `{ canceled, filePath }` | 11 |
 | `report:exportPdf` | `{ defaultName? }` | `{ canceled, filePath }` | 11 |
 | `capture:dashboard` | — | `{ filePath }` | 11 |
@@ -31,7 +32,7 @@ Preload exposes `window.api` only. `ipcRenderer` is never exposed to the rendere
 
 ## Preload Surface (`window.api`)
 
-`openLogFile()`, `saveText(opts)`, `exportPdf(opts)`, `captureDashboard()`, `getAppInfo()`, `toggleFullscreen()`, `openAlertWindow(alertId)`, `showInFolder(filePath)`, `getSettings()`, `setSettings(patch)`, `setAuthToken(token)`, `getServerStatus()`, `getPathForFile(file)`, `onServerStatus(cb)`, `onNavigate(cb)`, `onRefresh(cb)`, `onAlert(cb)`, `onSettingsChanged(cb)`.
+`openLogFile()`, `saveText(opts)`, `exportPdf(opts)`, `captureDashboard()`, `getAppInfo()`, `toggleFullscreen()`, `openAlertWindow(alertId)`, `showInFolder(filePath)`, `getSettings()`, `setSettings(patch)`, `setAuthToken(token)`, `setAlertCount(count)`, `getServerStatus()`, `getPathForFile(file)`, `onServerStatus(cb)`, `onNavigate(cb)`, `onRefresh(cb)`, `onAlert(cb)`, `onSettingsChanged(cb)`.
 
 ## Settings Defaults
 
