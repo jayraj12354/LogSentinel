@@ -8,10 +8,6 @@ const { checkDb } = require('./config/db');
 const catchErrors = require('./middleware/catchErrors');
 
 const app = express();
-// On Render (which sets RENDER=true) requests pass two proxies, Cloudflare's edge then Render's load balancer, so the
-// client IP is the second-to-last X-Forwarded-For entry. With 1, req.ip was the edge IP, which changes per request and
-// made the login throttle never trip. Elsewhere there is no proxy: trusting the header would let anyone fake their IP.
-if (process.env.RENDER) app.set('trust proxy', 2);
 
 // 'null' is the Origin Electron sends for pages loaded from file://
 app.use(cors({ origin: [config.clientOrigin, 'null'] }));

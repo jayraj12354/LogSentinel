@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
 const { app, dialog } = require('electron');
 const config = require('./config');
 
@@ -14,6 +16,11 @@ function attach(mainWindow) {
 // dev server is already running (the root `npm run dev` script does this).
 function startServer() {
   if (process.env.LS_SPAWN_SERVER === '0' || server) return;
+  // The bundled .env holds the public example JWT secret, and the server listens on the network, so anyone could sign
+  // admin tokens for any install. Give each install its own random secret (dotenv never overrides a variable already set).
+  const secretFile = path.join(app.getPath('userData'), 'jwt-secret');
+  if (!fs.existsSync(secretFile)) fs.writeFileSync(secretFile, crypto.randomBytes(32).toString('hex'), { mode: 0o600 });
+  process.env.JWT_SECRET = fs.readFileSync(secretFile, 'utf8').trim();
   const serverEntry = app.isPackaged
     ? path.join(process.resourcesPath, 'server', 'src', 'server.js')
     : path.join(__dirname, '..', 'server', 'src', 'server.js');

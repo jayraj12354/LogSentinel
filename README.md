@@ -1,3 +1,5 @@
+<p><img src="client/public/logo.svg" width="96" height="96" alt="LogSentinel logo"></p>
+
 # LogSentinel — Desktop Log Monitoring & Alerting System
 
 > **This is a build specification written for an AI coding assistant.** It describes a complete college project, split into **12 build parts**, with exact names, contracts, and acceptance checks. Read Sections 0–11 fully, then build **one part at a time**.
@@ -9,6 +11,18 @@
 | **Stack** | JavaScript, Node.js 20, Express 4, PostgreSQL 15+, Prisma 6 + `pg`, React 18 (Vite), Electron |
 | **Subjects covered** | Data Engineering (SQL/PostgreSQL) · Interactive System Development (Electron) · Backend Development (Node.js/Express/Prisma) |
 | **Target OS** | Windows 10/11 first; must also work on macOS and Linux |
+
+## Download and live deployment
+
+| | |
+|---|---|
+| **macOS app (Apple Silicon)** | [LogSentinel-0.1.1.dmg](https://github.com/jayraj12354/LogSentinel/releases/tag/v0.1.1) |
+| **Web app** | https://logsentinel-web.onrender.com |
+| **API health** | https://logsentinel-api.onrender.com/api/v1/health |
+
+**Desktop app.** It runs its own API on `localhost:4000` and needs PostgreSQL running locally with the `logsentinel` database. From a clone of this repo, run `node scripts/setup.js` once: it creates the role and database, applies migrations, adds the read-only role and loads the seed data. The DMG is not notarized, so on first launch right-click the app and choose **Open**.
+
+**Hosted version.** The React client is a Render static site and the API is a Render web service (Singapore, free plan). The database is a Supabase Postgres. On the free plan the API sleeps when idle, so the first request after a while takes 30–60 seconds. Importing and watching log files needs files on the server's disk, so those features work only in the desktop app.
 
 ---
 
