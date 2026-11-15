@@ -28,6 +28,7 @@ exports.create = async (req, res) => {
 exports.remove = async (req, res) => {
   const id = Number(req.params.id);
   if (!id) return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'invalid id' } });
+  if (id === req.user.id) return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'you can’t delete your own account' } });
   await prisma.user.delete({ where: { id } });
   res.json({ data: { deleted: true } });
 };

@@ -27,6 +27,6 @@ function save() {
 
 function get() { return settings; }
 
-function set(patch) { settings = { ...settings, ...patch }; save(); return settings; }
+function set(patch) { Object.assign(settings, patch); save(); return settings; }
 
-module.exports = { load, get, set, SETTINGS_PATH, DEFAULTS };
+module.exports = { load, get, set, save, SETTINGS_PATH, DEFAULTS, settings };

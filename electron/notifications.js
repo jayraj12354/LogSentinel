@@ -1,12 +1,17 @@
-const { app, ipcMain } = require('electron');
+const { app, ipcMain, Notification } = require('electron');
 
-function attach(mainWindow) {
-  ipcMain.handle('notifications:show', async (_e, { title, body }) => {
-    if (Notification.isSupported()) {
-      const n = new Notification({ title, body, silent: true });
-      n.show();
+const SEVERITY_RANK = { LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
+
+function attach(mainWindow, settings) {
+  ipcMain.handle('notifications:show', async (_e, { title, body, severity = 'MEDIUM' }) => {
+    if (!settings.notifications) return { ok: true, data: { shown: false } };
+    if (SEVERITY_RANK[severity] < SEVERITY_RANK[settings.minSeverity]) {
+      return { ok: true, data: { shown: false } };
     }
-    return { ok: true };
+    if (Notification.isSupported()) {
+      new Notification({ title, body, silent: !settings.soundAlerts }).show();
+    }
+    return { ok: true, data: { shown: true } };
   });
 }
 

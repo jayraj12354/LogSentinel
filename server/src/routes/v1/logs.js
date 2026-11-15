@@ -1,9 +1,9 @@
 'use strict';
 
 const express = require('express');
-const { auth } = require('../middleware/auth');
-const catchErrors = require('../middleware/catchErrors');
-const c = require('../controllers/logsController');
+const { auth } = require('../../middleware/auth');
+const catchErrors = require('../../middleware/catchErrors');
+const c = require('../../controllers/logsController');
 
 const r = express.Router();
 r.get('/', auth, catchErrors(c.list));

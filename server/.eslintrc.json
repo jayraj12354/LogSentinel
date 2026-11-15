@@ -7,6 +7,10 @@
   },
   "overrides": [
     {
+      "files": ["tests/**/*.js"],
+      "env": { "jest": true, "node": true }
+    },
+    {
       "files": ["src/demo/modules-demo.mjs"],
       "parserOptions": { "sourceType": "module" }
     }

@@ -7,7 +7,10 @@
     "setup": "node scripts/setup.js",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
-    "dev:desktop": "npm --prefix electron run dev",
+    "dev:desktop": "cross-env LS_SPAWN_SERVER=0 NODE_ENV=development npm --prefix electron run dev",
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\" \"npm:dev:desktop\"",
+    "build:client": "npm --prefix client run build",
+    "build": "npm run build:client && npm --prefix electron run dist",
     "lint": "npm --prefix server run lint"
   },
   "devDependencies": {
