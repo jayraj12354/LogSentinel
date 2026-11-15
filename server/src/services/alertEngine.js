@@ -8,8 +8,8 @@ async function evaluatePolicies() {
   for (const p of policies.rows) {
     const start = new Date(now.getTime() - p.window_seconds * 1000);
     const groupCol = p.group_by === 'SOURCE' ? 'source_id' : 'ip';
-    const sql = `SELECT ${groupCol} AS g, count(*) AS cnt FROM log_entries WHERE category = $1 AND logged_at >= $2 AND $3 IS NOT NULL GROUP BY ${groupCol} HAVING count(*) >= $4`;
-    const params = [p.category, start, p.group_by === 'SOURCE' ? null : null, p.threshold_count];
+    const sql = `SELECT ${groupCol} AS g, count(*) AS cnt FROM log_entries WHERE category = $1 AND logged_at >= $2 AND ${groupCol} IS NOT NULL GROUP BY ${groupCol} HAVING count(*) >= $3`;
+    const params = [p.category, start, p.threshold_count];
     const rows = await pool.query(sql, params);
     for (const row of rows.rows) {
       const dedupeKey = `${p.id}:${row.g}`;

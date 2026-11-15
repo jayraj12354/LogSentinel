@@ -64,11 +64,12 @@ async function importFile(sourceId, filePath, batchSize = config.importBatchSize
       });
       if (values.length >= batchSize) {
         await flush();
-        linesOk += values.length;
+        linesOk += batchSize;
       }
     }
+    const remaining = values.length;
     await flush();
-    linesOk += values.length;
+    linesOk += remaining;
     await client.query('COMMIT');
   } catch (e) {
     try { await client.query('ROLLBACK').catch(() => null); } catch (_) { throw e; }
