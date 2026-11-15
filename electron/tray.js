@@ -12,7 +12,8 @@ function setCounter(n) {
 }
 
 function init(mainWindow) {
-  const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'placeholder.png'));
+  // 'Template' suffix: macOS tints it for light/dark menu bars; trayTemplate@2x.png is picked up automatically.
+  const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'trayTemplate.png'));
   tray = new Tray(icon);
   tray.setToolTip('LogSentinel');
   if (icon.isEmpty()) tray.setTitle('LogSentinel'); // no icon file shipped; show text so the menu-bar item is visible

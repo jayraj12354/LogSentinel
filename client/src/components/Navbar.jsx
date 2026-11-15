@@ -33,9 +33,7 @@ export default function Navbar() {
   return (
     <nav className="rail" aria-label="Main">
       <div className="rail-brand">
-        <svg viewBox="0 0 40 16" width="40" height="16" aria-hidden="true">
-          <path d="M0 8h10l3-6 4 12 3-9 2 3h18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
+        <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="" width="28" height="28" />
         LogSentinel
       </div>
       <div className="rail-group">{MONITOR.map(link)}</div>

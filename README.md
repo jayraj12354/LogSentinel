@@ -1,3 +1,5 @@
+<p><img src="client/public/logo.svg" width="96" height="96" alt="LogSentinel logo"></p>
+
 # LogSentinel — Desktop Log Monitoring & Alerting System
 
 > **This is a build specification written for an AI coding assistant.** It describes a complete college project, split into **12 build parts**, with exact names, contracts, and acceptance checks. Read Sections 0–11 fully, then build **one part at a time**.

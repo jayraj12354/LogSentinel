@@ -23,6 +23,7 @@
     "mac": {
       "target": "dmg",
       "artifactName": "LogSentinel-${version}.dmg",
+      "icon": "assets/icon.icns",
       "identity": "-",
       "entitlements": "entitlements.plist",
       "entitlementsInherit": "entitlements.plist"

@@ -35,6 +35,7 @@ export default function Login() {
         </svg>
       </div>
       <form className="login-form" onSubmit={handleSubmit}>
+        <img className="login-logo" src={`${import.meta.env.BASE_URL}logo.svg`} alt="" width="72" height="72" />
         <h1>LogSentinel</h1>
         <p className="lede">Sign in to watch your logs and respond to alerts.</p>
         {error && <p className="notice notice-error" role="alert">{error}</p>}
