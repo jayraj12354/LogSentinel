@@ -1,15 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
-import { ProtectedRoute } from '../components/ProtectedRoute';
-import Navbar from '../components/Navbar';
-import Login from '../pages/Login';
-import Dashboard from '../pages/Dashboard';
-import Logs from '../pages/Logs';
-import Analytics from '../pages/Analytics';
-import Alerts from '../pages/Alerts';
-import Sources from '../pages/Sources';
-import Rules from '../pages/Rules';
-import Policies from '../pages/Policies';
-import Users from '../pages/Users';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Logs from './pages/Logs';
+import Analytics from './pages/Analytics';
+import Alerts from './pages/Alerts';
+import Sources from './pages/Sources';
+import Rules from './pages/Rules';
+import Policies from './pages/Policies';
+import Users from './pages/Users';
 
 export default function App() {
   return (

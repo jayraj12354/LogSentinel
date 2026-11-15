@@ -40,7 +40,7 @@ r.post('/:id/watch', auth, adminOnly, catchErrors(async (req, res) => {
   if (!source || !source.filePath) return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'source has no file path' } });
   if (watchManager.status(id).watching) return res.status(409).json({ error: { code: 'CONFLICT', message: 'already watching' } });
   await refreshCompiledRules();
-  watchManager.start(id, source.filePath, (sid, lineNo, text) => {
+  await watchManager.start(id, source.filePath, (sid, lineNo, text) => {
     handleLogLine(sid, lineNo, text).catch(() => {});
   });
   res.json({ data: { watching: true } });
