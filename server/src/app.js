@@ -4,8 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config/env');
 const logger = require('./utils/logger');
-const { checkDb } = require('./config/db');
-const catchErrors = require('./middleware/catchErrors');
 
 const app = express();
 
@@ -20,10 +18,18 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/v1/health', catchErrors(async (req, res) => {
-  const db = await checkDb();
-  res.json({ data: { status: 'ok', uptime: Math.round(process.uptime()), db: db ? 'connected' : 'disconnected' } });
-}));
+app.get('/api/v1/health', async (_req, res) => {
+  let db = 'disconnected';
+  try {
+    const { checkDb } = require('./config/db');
+    db = await checkDb().then(() => 'connected').catch(() => 'disconnected');
+  } catch (e) { db = 'disconnected'; }
+  res.json({ data: { status: 'ok', uptime: Math.round(process.uptime()), db } });
+});
+
+app.get('/api/v2/health', (_req, res) => {
+  res.json({ data: { version: 2 } });
+});
 
 app.use('/api/v1/auth', require('./routes/v1/auth'));
 app.use('/api/v1/users', require('./routes/v1/users'));

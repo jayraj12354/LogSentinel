@@ -11,7 +11,12 @@ exports.login = async (req, res) => {
   if (!username || !password) {
     return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'username and password required' } });
   }
-  const user = await prisma.user.findUnique({ where: { username } });
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { username } });
+  } catch (e) {
+    return res.status(503).json({ error: { code: 'INTERNAL', message: 'database unavailable' } });
+  }
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     return res.status(401).json({ error: { code: 'UNAUTHENTICATED', message: 'bad credentials' } });
   }

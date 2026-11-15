@@ -1,10 +1,10 @@
 'use strict';
 
 const express = require('express');
-const { auth, adminOnly } = require('../middleware/auth');
-const catchErrors = require('../middleware/catchErrors');
+const { auth, adminOnly } = require('../../middleware/auth');
+const catchErrors = require('../../middleware/catchErrors');
 const { PrismaClient } = require('@prisma/client');
-const { WatchManager } = require('../services/watchManager');
+const { WatchManager } = require('../../services/watchManager');
 
 const prisma = new PrismaClient();
 const watchManager = new WatchManager();

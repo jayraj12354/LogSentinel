@@ -9,6 +9,11 @@
     {
       "files": ["src/demo/modules-demo.mjs"],
       "parserOptions": { "sourceType": "module" }
+    },
+    {
+      "files": ["tests/**/*.js"],
+      "env": { "jest": true },
+      "rules": { "no-undef": "off" }
     }
   ]
 }

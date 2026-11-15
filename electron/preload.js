@@ -1,4 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const os = require('os');
+const path = require('path');
 
 const api = {
   openLogFile: () => ipcRenderer.invoke('dialog:openLogFile'),
@@ -13,7 +15,7 @@ const api = {
   setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
   setAuthToken: (token) => ipcRenderer.invoke('auth:setToken', { token }),
   getServerStatus: () => ipcRenderer.invoke('server:getStatus'),
-  getPathForFile: (file) => require('@electron/remote').app.getPath('userData') + '/' + file,
+  getPathForFile: (file) => path.join(os.homedir(), 'LogSentinel', file),
   onServerStatus: (cb) => { const h = (e, d) => cb(d); ipcRenderer.on('server:status', h); return () => ipcRenderer.off('server:status', h); },
   onNavigate: (cb) => { const h = (e, d) => cb(d); ipcRenderer.on('shortcut:navigate', h); return () => ipcRenderer.off('shortcut:navigate', h); },
   onRefresh: (cb) => { const h = () => cb(); ipcRenderer.on('shortcut:refresh', h); return () => ipcRenderer.off('shortcut:refresh', h); },

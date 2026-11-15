@@ -1,4 +1,6 @@
-const { ipcMain, dialog } = require('electron');
+const { ipcMain, dialog, app } = require('electron');
+const { createAlertWindow } = require('../windows/alertWindow');
+const files = require('./files');
 
 function registerIpc(mainWindow) {
   ipcMain.handle('dialog:openLogFile', async () => {
@@ -12,12 +14,16 @@ function registerIpc(mainWindow) {
   ipcMain.handle('window:toggleFullscreen', async () => {
     const win = mainWindow; const isFs = win.isFullScreen(); win.setFullScreen(!isFs); return { ok: true, data: { fullscreen: !isFs } };
   });
-  ipcMain.handle('window:openAlertDetail', async () => ({ ok: true, data: { opened: true } }));
+  ipcMain.handle('window:openAlertDetail', async (_e, { alertId }) => {
+    createAlertWindow(alertId);
+    return { ok: true, data: { opened: true } };
+  });
   ipcMain.handle('shell:showItem', async (_e, { filePath }) => { dialog.showItemInFolder(filePath); return { ok: true, data: { shown: true } }; });
   ipcMain.handle('settings:get', async () => ({ ok: true, data: require('./settings').get() }));
   ipcMain.handle('settings:set', async (_e, patch) => ({ ok: true, data: require('./settings').set(patch) }));
   ipcMain.handle('auth:setToken', async () => ({ ok: true, data: { stored: true } }));
   ipcMain.handle('server:getStatus', async () => ({ ok: true, data: { running: true, port: 4000, lastCheck: new Date().toISOString() } }));
+  files.registerIpc(mainWindow);
 }
 
 module.exports = { registerIpc };

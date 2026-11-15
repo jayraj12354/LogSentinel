@@ -1,4 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+'use strict';
+
+const { app, BrowserWindow, globalShortcut } = require('electron');
 const path = require('path');
 const config = require('./config');
 const menu = require('./menu');
@@ -8,26 +10,23 @@ const { registerIpc } = require('./ipc/registerIpc');
 const serverManager = require('./serverManager');
 const alertStream = require('./alertStream');
 const notifications = require('./notifications');
+const { createMainWindow } = require('./windows/mainWindow');
 
 let mainWindow = null;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    minWidth: 900,
-    minHeight: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      sandbox: true,
-      nodeIntegration: false,
-    },
-    show: false,
+  mainWindow = createMainWindow();
+
+  mainWindow.on('close', (event) => {
+    const s = settings.get();
+    if (s.minimizeToTray && process.platform !== 'darwin') {
+      event.preventDefault();
+      mainWindow.hide();
+      return;
+    }
+    mainWindow = null;
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'placeholder', 'index.html'));
-  mainWindow.once('ready-to-show', () => mainWindow.show());
   mainWindow.on('closed', () => { mainWindow = null; });
 
   menu.build(mainWindow);
@@ -37,10 +36,17 @@ function createWindow() {
   serverManager.attach(mainWindow);
   alertStream.attach(mainWindow);
   notifications.attach(mainWindow);
+
+  globalShortcut.register('CommandOrControl+R', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('shortcut:refresh');
+    }
+  });
 }
 
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+app.on('will-quit', () => { globalShortcut.unregisterAll(); });
 
 module.exports = { getMainWindow: () => mainWindow };
