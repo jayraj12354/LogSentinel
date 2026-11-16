@@ -89,6 +89,14 @@
       {
         "from": "../sample-logs",
         "to": "sample-logs"
+      },
+      {
+        "from": "../db",
+        "to": "db",
+        "filter": [
+          "**/*",
+          "!tests/**"
+        ]
       }
     ]
   }

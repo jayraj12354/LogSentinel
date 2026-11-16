@@ -6,4 +6,5 @@ export default defineConfig({
   base: './', // relative asset paths so index.html works from file:// in Electron
   server: { port: 5173, strictPort: true },
   build: { outDir: 'dist', emptyOutDir: true },
+  css: { postcss: {} },
 });

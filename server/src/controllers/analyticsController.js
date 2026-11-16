@@ -3,10 +3,15 @@
 const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
+const { parse } = require('pg-connection-string');
 const config = require('../config/env');
 
 // Analytics only reads, so it connects as the read-only logsentinel_viewer role (db/roles.sql).
-const pool = new Pool({ connectionString: config.analyticsDatabaseUrl });
+const analyticsConfig = parse(config.analyticsDatabaseUrl);
+if (!config.analyticsDatabaseUrl.includes('localhost') && !config.analyticsDatabaseUrl.includes('127.0.0.1')) {
+  analyticsConfig.ssl = { rejectUnauthorized: false };
+}
+const pool = new Pool(analyticsConfig);
 
 const QUERIES = {
   top_offenders: "SELECT ip, count(*) AS failures FROM log_entries WHERE category='AUTH_FAILURE' AND ip IS NOT NULL GROUP BY ip ORDER BY failures DESC LIMIT 10",
@@ -43,9 +48,22 @@ async function runCatalogued(req, res) {
 // Only catalogued names: the name comes from the URL, and Express decodes %2F, so a raw name could walk out of db/queries.
 async function getSql(req, res) {
   const { name } = req.params;
-  const file = Object.hasOwn(QUERIES, name) && fs.readdirSync(QUERIES_DIR).find((f) => f.endsWith(`${name}.sql`));
-  if (!file) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'sql not found' } });
-  res.type('text/sql').send(fs.readFileSync(path.join(QUERIES_DIR, file), 'utf8'));
+  if (!Object.hasOwn(QUERIES, name)) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'sql not found' } });
+  }
+
+  try {
+    if (fs.existsSync(QUERIES_DIR)) {
+      const file = fs.readdirSync(QUERIES_DIR).find((f) => f.endsWith(`${name}.sql`));
+      if (file) {
+        return res.type('text/sql').send(fs.readFileSync(path.join(QUERIES_DIR, file), 'utf8'));
+      }
+    }
+  } catch (_e) {
+    // Fall back to catalogued query string below if disk read fails
+  }
+
+  return res.type('text/sql').send(QUERIES[name]);
 }
 
 module.exports = { summary, runCatalogued, getSql };
