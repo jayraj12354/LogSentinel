@@ -1,20 +1,14 @@
 'use strict';
 
-// SYLLABUS: Backend Development – Node.js fundamentals: environment/config
-// Loads dotenv, validates required variables, exits clearly if missing,
-// and exports a frozen config object.
-
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load .env from the repository root (two levels up from src/config).
 dotenv.config({ path: path.resolve(__dirname, '..', '..', '..', '.env') });
 
 const REQUIRED = ['DATABASE_URL', 'ANALYTICS_DATABASE_URL', 'JWT_SECRET'];
 
 const missing = REQUIRED.filter((key) => !process.env[key]);
 if (missing.length > 0) {
-  // Clear, actionable message for students.
   console.error('[env] Missing required environment variables:');
   missing.forEach((key) => console.error(`  - ${key}`));
   console.error('[env] Copy .env.example to .env and fill in values.');
