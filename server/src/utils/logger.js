@@ -1,8 +1,5 @@
 'use strict';
 
-// SYLLABUS: Backend Development – Node.js fundamentals: modules, console
-// Simple logger wrapping console with levels. No external logging libraries.
-
 const LEVELS = {
   debug: 0,
   info: 1,
