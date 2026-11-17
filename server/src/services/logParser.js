@@ -1,7 +1,7 @@
 'use strict';
 
-const GENERIC = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z?)\s+(DEBUG|INFO|WARN|ERROR|CRITICAL)\s+\[([^\]]+)\]\s+(.*)$/;
-const ACCESS = /^(\S+) \S+ \S+ \[([^\]]+)\] "(\S+) (\S+) (\S+)" (\d{3}) (\d+|-)(?: "([^"]*)" "([^"]*)")?$/;
+const GENERIC_PATTERN = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z?)\s+(DEBUG|INFO|WARN|ERROR|CRITICAL)\s+\[([^\]]+)\]\s+(.*)$/;
+const ACCESS_PATTERN = /^(\S+) \S+ \S+ \[([^\]]+)\] "(\S+) (\S+) (\S+)" (\d{3}) (\d+|-)(?: "([^"]*)" "([^"]*)")?$/;
 const IP_RE = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
 
 function stripNul(line) {
@@ -27,7 +27,7 @@ function extractIp(text) {
 }
 
 function parseGeneric(line) {
-  const m = GENERIC.exec(line);
+  const m = GENERIC_PATTERN.exec(line);
   if (!m) return null;
   const [, timestamp, level, component, message] = m;
   return {
@@ -53,7 +53,7 @@ function parseAccessDate(value) {
 }
 
 function parseAccess(line) {
-  const m = ACCESS.exec(line);
+  const m = ACCESS_PATTERN.exec(line);
   if (!m) return null;
   const [, ip, dateStr, method, path, status, bytes, referrer, userAgent] = m;
   const loggedAt = parseAccessDate(dateStr);
