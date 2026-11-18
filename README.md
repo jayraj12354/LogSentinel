@@ -1,51 +1,159 @@
+<div align="center">
+
 # 🛡️ LogSentinel
 
-### Desktop log monitoring, threat detection, and alert triage
+**Real-time log monitoring, threat detection & alert triage — all in one desktop app**
 
-LogSentinel brings application and system logs into one place. Import log files or watch them live, review suspicious activity, and investigate trends from a clean desktop dashboard.
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Electron](https://img.shields.io/badge/Electron-Desktop-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+[🚀 Live Demo](https://drive.google.com/drive/folders/1ch8OhoiWkofaTtYlsb-q8xOhVBlGMSzw) · [📖 API Docs](docs/API.md) · [🗃️ Database Schema](docs/ERD.md)
+
+</div>
 
 ---
 
-## ✨ What you can do
+## 📌 Overview
 
-- **Monitor logs** from configured sources, with live watching and filtering.
-- **Spot suspicious activity** with configurable detection rules and policies.
-- **Triage alerts** by severity and status, with desktop notifications.
-- **Explore trends** through analytics and export filtered log data.
-- **Control access** with administrator and viewer roles.
+**LogSentinel** is a full-stack desktop application that centralises application and system log management. It lets you import log files or watch them live, spot suspicious patterns using configurable detection rules, and triage security alerts — all from a clean, responsive dashboard.
 
-## 🧰 Built with
+```
+┌─────────────────────────────────────────────────────────┐
+│  Electron Shell                                         │
+│  ┌────────────────────┐   ┌────────────────────────┐   │
+│  │  React + Vite UI   │   │   Node.js / Express    │   │
+│  │   (Dashboard)      │◄──│   REST API + SSE       │   │
+│  └────────────────────┘   └──────────┬─────────────┘   │
+│                                      │                  │
+│                            ┌─────────▼──────────┐       │
+│                            │   PostgreSQL + Prisma│      │
+│                            └─────────────────────┘      │
+└─────────────────────────────────────────────────────────┘
+```
 
-**React · Vite · Electron · Node.js · Express · PostgreSQL · Prisma**
+---
 
-## 🚀 Run locally
+## ✨ Features
 
-### Requirements
+| Feature | Description |
+|---|---|
+| 📂 **Log Import** | Drag-and-drop or browse to import `.log` files in GENERIC or Apache ACCESS format |
+| 👁️ **Live Watching** | Stream new log lines in real-time as files grow on disk |
+| 🔎 **Smart Filtering** | Filter by severity, source, date range, IP address, and free-text search |
+| 🚨 **Alert Engine** | Policy-based alerting with configurable thresholds, windows, and severity levels |
+| 📊 **Analytics** | Trend charts, top offenders, moving averages, and anomaly detection queries |
+| 🔔 **Notifications** | Native desktop notifications for new critical or high-severity alerts |
+| 👤 **Role-based Access** | Separate Administrator and Viewer roles with JWT-secured endpoints |
+| 📤 **Export** | Export filtered log data for downstream investigation |
 
-- Node.js and npm
-- PostgreSQL
+---
 
-### Start the app
+## 🧰 Tech Stack
+
+<table>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>React 18, Vite, React Router, Context API</td>
+</tr>
+<tr>
+<td><strong>Desktop</strong></td>
+<td>Electron, IPC bridge, system tray, native notifications</td>
+</tr>
+<tr>
+<td><strong>Backend</strong></td>
+<td>Node.js, Express, Server-Sent Events (SSE), JWT auth</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>PostgreSQL, Prisma ORM, window functions, triggers</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>Jest, Supertest</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** v20 or later
+- **PostgreSQL** running locally (or via Docker)
+- **npm** v9+
+
+### Installation
 
 ```bash
+# 1. Clone the repo
+git clone https://github.com/your-username/major_project.git
+cd major_project
+
+# 2. Install all workspace dependencies
 npm install
+
+# 3. Configure your environment
+cp .env.example .env
+# Edit .env to set DATABASE_URL, JWT_SECRET, etc.
+
+# 4. Set up the database (runs migrations + seed)
 npm run setup
+
+# 5. Start everything in development mode
 npm run dev
 ```
 
-The development command starts the API, web client, and Electron desktop app. For database configuration and additional setup details, see [`scripts/setup.js`](scripts/setup.js) and the project documentation in [`docs/`](docs/).
-
-## 🔐 Demo access
-
-| Role | Username | Password |
-| --- | --- | --- |
-| Administrator | `admin` | `admin123` |
-| Viewer | `viewer` | `viewer123` |
-
-## 🌐 Deployment
-
-[Open the deployed application](https://drive.google.com/drive/folders/1ch8OhoiWkofaTtYlsb-q8xOhVBlGMSzw)
+> `npm run dev` concurrently starts the **Express API**, the **Vite dev server**, and the **Electron** desktop window.
 
 ---
 
-<p align="center">Built to make log investigations clearer and faster.</p>
+## 🔐 Demo Credentials
+
+| Role | Username | Password |
+|---|---|---|
+| 👑 Administrator | `admin` | `admin123` |
+| 👀 Viewer | `viewer` | `viewer123` |
+
+---
+
+## 📁 Project Structure
+
+```
+major_project/
+├── client/          # React + Vite frontend
+│   └── src/
+│       ├── pages/   # Dashboard, Logs, Alerts, Analytics …
+│       ├── components/
+│       └── api/
+├── server/          # Express REST API
+│   └── src/
+│       ├── controllers/
+│       ├── services/    # logParser, alertEngine, LogWatcher …
+│       ├── routes/v1/
+│       └── middleware/
+├── electron/        # Desktop shell
+│   ├── main.js
+│   ├── preload.js
+│   └── ipc/
+├── db/              # Raw SQL scripts, seed data, analytics queries
+├── docs/            # API reference, ERD, demo script
+└── scripts/         # Setup, log generator, attack simulator
+```
+
+---
+
+## 🌐 Deployment
+
+A hosted version of the application is available here:
+
+**[▶ Open deployed app](https://drive.google.com/drive/folders/1ch8OhoiWkofaTtYlsb-q8xOhVBlGMSzw)**
+
+---
+
+<p align="center">
+  <sub>Built to make log investigations clearer and faster. ⚡</sub>
+</p>
