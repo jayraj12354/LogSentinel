@@ -155,5 +155,5 @@ A hosted version of the application is available here:
 ---
 
 <p align="center">
-  <sub>Built to make log investigations cleaner and faster. ⚡</sub>
+  <sub>Built to make log investigations clearer and faster. ⚡</sub>
 </p>
