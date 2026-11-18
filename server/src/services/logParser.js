@@ -19,7 +19,7 @@ function validIp(candidate) {
 
 function extractIp(text) {
   let match;
-  IP_RE.lastIndex = 0; // global regex keeps state between calls; an early return would skip the next line's IP
+  IP_RE.lastIndex = 0;
   while ((match = IP_RE.exec(text)) !== null) {
     if (validIp(match[0])) return match[0];
   }
@@ -29,9 +29,9 @@ function extractIp(text) {
 function parseGeneric(line) {
   const m = GENERIC.exec(line);
   if (!m) return null;
-  const [, loggedAt, level, component, message] = m;
+  const [, timestamp, level, component, message] = m;
   return {
-    loggedAt: new Date(loggedAt.endsWith('Z') ? loggedAt : `${loggedAt}Z`), // no zone means UTC, not the server's local time
+    loggedAt: new Date(timestamp.endsWith('Z') ? timestamp : `${timestamp}Z`),
     level,
     message,
     ip: extractIp(message),
