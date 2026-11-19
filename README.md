@@ -47,7 +47,7 @@
 | 📊 **Analytics** | Trend charts, top offenders, moving averages, and anomaly detection queries |
 | 🔔 **Notifications** | Native desktop notifications for new critical or high-severity alerts |
 | 👤 **Role-based Access** | Separate Administrator and Viewer roles with JWT-secured endpoints |
-| 📤 **Export** | Export filtered log data for downstream investigation |
+| 📤 **Data Export** | Export filtered log data for downstream investigation |
 
 ---
 
