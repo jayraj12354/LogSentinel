@@ -10,7 +10,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-[🚀 Live Demo](https://drive.google.com/drive/folders/1ch8OhoiWkofaTtYlsb-q8xOhVBlGMSzw) · [📖 API Docs](docs/API.md) · [🗃️ Database Schema](docs/ERD.md)
+[🌍 Live Demo](https://drive.google.com/drive/folders/1ch8OhoiWkofaTtYlsb-q8xOhVBlGMSzw) · [📖 API Docs](docs/API.md) · [🗃️ Database Schema](docs/ERD.md)
 
 </div>
 
